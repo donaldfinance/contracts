@@ -45,16 +45,16 @@ contract Presale is OwnerRole {
         require(!paused, "Presale: paused");
         require(minPurchase <= msg.value && balances[msg.sender] + msg.value <= maxPurchasePerWallet, "Presale: purchase amount limit");
 
-        uint256 tokensAmout = calculateTokensAmount(msg.value);
+        uint256 tokensAmount = calculateTokensAmount(msg.value);
 
-        deliverTokens(msg.sender, tokensAmout);
+        deliverTokens(msg.sender, tokensAmount);
 
         totalBnb = totalBnb.add(msg.value);
-        totalToken = totalToken.add(tokensAmout);
+        totalToken = totalToken.add(tokensAmount);
 
         balances[msg.sender] = balances[msg.sender].add(msg.value);
 
-        emit Purchase(msg.sender, msg.value, tokensAmout);
+        emit Purchase(msg.sender, msg.value, tokensAmount);
     }
 
     function calculateTokensAmount(uint256 _amount) public view returns (uint256)  {
