@@ -39,8 +39,8 @@ abstract contract BEP20 is OwnerRole, MinterRole {
         _mint(_to, _amount);
     }
 
-    function burn(address _from, uint256 _amount) external virtual onlyOwner {
-        _burn(_from, _amount);
+    function burn(uint256 _amount) external virtual {
+        _burn(msg.sender, _amount);
     }
 
     function approve(address _to, uint256 _amount) external virtual returns (bool) {
