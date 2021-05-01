@@ -6,14 +6,14 @@ https://donald.finance/
 
 ### BSCMAINNET
 
-- Donald Token - link
-- Master Chef - link
-- Presale - link
+- Donald Token - [0x9D78e6466A0d0Fcfefb8f357cce9134b99b4fc8a](https://bscscan.com/address/0x9d78e6466a0d0fcfefb8f357cce9134b99b4fc8a)
+- Master Chef - 
+- Presale - [0x523EE949F431b4d266E8DdCf381F93993ff61d8e](https://bscscan.com/address/0x523ee949f431b4d266e8ddcf381f93993ff61d8e)
 
 ## Audits
 
 ### TechRate
-- report
+- [report](https://github.com/TechRate/Smart-Contract-Audits/blob/main/Donald%20Finance.pdf)
 
 ### MythX
 - Donald Token - [report](https://donald.finance/audits/c9f9200e34d5ed8afd77b62b.pdf)
