@@ -49,10 +49,6 @@ contract MasterChef is OwnerRole {
         devAddress = msg.sender;
     }
 
-    function updateStartBlock(uint256 _startBlock) external onlyOwner {
-        startBlock = _startBlock;
-    }
-
     function poolLength() external view returns (uint256) {
         return poolInfo.length;
     }
@@ -227,13 +223,13 @@ contract MasterChef is OwnerRole {
         totalAllocPoint = totalAllocPoint.add(_allocPoint);
 
         poolInfo.push(PoolInfo({
-            token: _token,
-            total: 0,
-            allocPoint: _allocPoint,
-            lastRewardBlock: block.number > startBlock ? block.number : startBlock,
-            accTokensPerShare: 0,
-            depositFee: _depositFee,
-            extraBonus: _extraBonus
+        token: _token,
+        total: 0,
+        allocPoint: _allocPoint,
+        lastRewardBlock: block.number > startBlock ? block.number : startBlock,
+        accTokensPerShare: 0,
+        depositFee: _depositFee,
+        extraBonus: _extraBonus
         }));
     }
 
