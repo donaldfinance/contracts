@@ -31,7 +31,6 @@ contract MasterChef is OwnerRole {
         uint256 lastRewardBlock;
         uint256 accTokensPerShare;
         uint16 depositFee;
-        uint16 withdrawFee;
         uint16 extraBonus;
     }
 
@@ -48,6 +47,10 @@ contract MasterChef is OwnerRole {
         startBlock = _startBlock;
 
         devAddress = msg.sender;
+    }
+
+    function updateStartBlock(uint256 _startBlock) external onlyOwner {
+        startBlock = _startBlock;
     }
 
     function poolLength() external view returns (uint256) {
@@ -174,13 +177,6 @@ contract MasterChef is OwnerRole {
             user.amount = user.amount.sub(_amount);
             pool.total = pool.total.sub(_amount);
 
-            if (pool.withdrawFee > 0) {
-                uint256 withdrawFeeAmount = calcFee(_amount, pool.withdrawFee);
-
-                pool.token.transfer(devAddress, withdrawFeeAmount);
-                _amount = _amount.sub(withdrawFeeAmount);
-            }
-
             pool.token.transfer(address(msg.sender), _amount);
         }
 
@@ -199,13 +195,6 @@ contract MasterChef is OwnerRole {
         user.rewardDebt = 0;
 
         pool.total = pool.total.sub(amount);
-
-        if (pool.withdrawFee > 0) {
-            uint256 withdrawFeeAmount = calcFee(amount, pool.withdrawFee);
-
-            pool.token.transfer(devAddress, withdrawFeeAmount);
-            amount = amount.sub(withdrawFeeAmount);
-        }
 
         pool.token.transfer(address(msg.sender), amount);
 
@@ -228,9 +217,8 @@ contract MasterChef is OwnerRole {
         }
     }
 
-    function add(IBEP20 _token, uint256 _allocPoint, uint16 _depositFee, uint16 _withdrawFee, uint16 _extraBonus, bool _withUpdate) external onlyOwner {
-        require(_depositFee >= 0 && _depositFee <= 10000);
-        require(_withdrawFee >= 0 && _withdrawFee <= 10000);
+    function add(IBEP20 _token, uint256 _allocPoint, uint16 _depositFee, uint16 _extraBonus, bool _withUpdate) external onlyOwner {
+        require(_depositFee >= 0 && _depositFee <= 1000);
 
         if (_withUpdate) {
             massUpdatePools();
@@ -242,17 +230,15 @@ contract MasterChef is OwnerRole {
             token: _token,
             total: 0,
             allocPoint: _allocPoint,
-            lastRewardBlock: block.number > startBlock ? block.number: startBlock,
+            lastRewardBlock: block.number > startBlock ? block.number : startBlock,
             accTokensPerShare: 0,
             depositFee: _depositFee,
-            withdrawFee: _withdrawFee,
             extraBonus: _extraBonus
         }));
     }
 
-    function set(uint256 _pid, uint256 _allocPoint, uint16 _depositFee, uint16 _withdrawFee, uint16 _extraBonus, bool _withUpdate) external onlyOwner {
-        require(_depositFee >= 0 && _depositFee <= 10000);
-        require(_withdrawFee >= 0 && _withdrawFee <= 10000);
+    function set(uint256 _pid, uint256 _allocPoint, uint16 _depositFee, uint16 _extraBonus, bool _withUpdate) external onlyOwner {
+        require(_depositFee >= 0 && _depositFee <= 1000);
 
         if (_withUpdate) {
             massUpdatePools();
@@ -262,11 +248,17 @@ contract MasterChef is OwnerRole {
 
         poolInfo[_pid].allocPoint = _allocPoint;
         poolInfo[_pid].depositFee = _depositFee;
-        poolInfo[_pid].withdrawFee = _withdrawFee;
         poolInfo[_pid].extraBonus = _extraBonus;
 
         if (prevAllocPoint != _allocPoint) {
             totalAllocPoint = totalAllocPoint.sub(prevAllocPoint).add(_allocPoint);
+        }
+    }
+
+    function updateExtraBonus(uint16 _extraBonus) external onlyOwner {
+        uint256 length = poolInfo.length;
+        for (uint256 pid = 0; pid < length; ++pid) {
+            poolInfo[pid].extraBonus = _extraBonus;
         }
     }
 
